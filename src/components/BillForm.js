@@ -7,6 +7,8 @@ const BillForm = (props) => {
   const {
     bill,
     setBill,
+    attachments,
+    setAttachments,
   } = props;
 
   const countFromForm = (total, item) => {
@@ -51,6 +53,11 @@ const BillForm = (props) => {
     const items = bill.items.filter((item, index) => index !== removeIndex);
 
     setBill({ ...bill, items });
+  };
+
+  const handleFileChange = (event) => {
+    setAttachments(event.target.files);
+    console.log(attachments);
   };
 
   const submitBill = (event) => {
@@ -98,17 +105,23 @@ const BillForm = (props) => {
         <tbody>
           {billItemsForm}
         </tbody>
-
-        <tfoot>
-          <tr>
-            <td>Yhteensä</td>
-            <td>{totalPrice()}</td>
-            <td />
-          </tr>
-        </tfoot>
       </table>
 
-      <button type="button" onClick={handleAddBillItem}>Lisää artikkeli</button>
+      <button type="button" onClick={handleAddBillItem}>+</button>
+      <strong>Yhteensä: {totalPrice()} €</strong>
+
+      <label htmlFor="attachments">
+        Liitteet
+
+        <input
+          type="file"
+          name="myFile"
+          accept=".pdf, image/*"
+          multiple
+          onChange={handleFileChange}
+        />
+      </label>
+
       <button type="submit">Tallenna</button>
     </form>
   );
@@ -120,9 +133,10 @@ BillForm.propTypes = {
       name: PropTypes.string,
       price: PropTypes.number,
     })),
-    attachments: PropTypes.array,
   }).isRequired,
   setBill: PropTypes.func.isRequired,
+  attachments: PropTypes.arrayOf(PropTypes.files).isRequired,
+  setAttachments: PropTypes.func.isRequired,
 };
 
 export default BillForm;

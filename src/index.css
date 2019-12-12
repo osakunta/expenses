@@ -12,7 +12,7 @@ code {
     monospace;
 }
 
-input, label {
+input, label, button {
   display: block;
   margin: 0.5rem 0;
 }

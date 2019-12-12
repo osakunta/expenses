@@ -17,5 +17,4 @@ export const emptyBillItem = {
 
 export const emptyBill = {
   items: [emptyBillItem],
-  attachments: [],
 };
