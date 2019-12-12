@@ -9,3 +9,13 @@ export const emptyBiller = {
 };
 
 export const newBiller = JSON.parse(window.localStorage.getItem(BILLER)) || emptyBiller;
+
+export const emptyBillItem = {
+  name: '',
+  price: 0,
+};
+
+export const emptyBill = {
+  items: [emptyBillItem],
+  attachments: [],
+};
