@@ -1,33 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-const BILLER = 'biller';
+import { BILLER, emptyBiller } from 'utils/config';
 
-const emptyBiller = {
-  name: '',
-  address: '',
-  zipCode: '',
-  postOffice: '',
-  iban: '',
-};
-
-const newBiller = JSON.parse(window.localStorage.getItem(BILLER)) || emptyBiller;
-
-const ExpenseForm = () => {
-  const [biller, setBiller] = useState(newBiller);
-  const [saveToStore, setSaveToStore] = useState(false);
+const BillerForm = (props) => {
+  const {
+    biller,
+    setBiller,
+    saveBiller,
+    setSaveBiller,
+  } = props;
 
   const handleBillerChange = (event) => {
     setBiller({ ...biller, [event.target.name]: event.target.value });
   };
 
-  const handleSaveToStoreChange = (event) => {
-    setSaveToStore(event.target.checked);
+  const handleSaveBillerChange = (event) => {
+    setSaveBiller(event.target.checked);
   };
 
-  const saveBiller = (event) => {
+  const submitBiller = (event) => {
     event.preventDefault();
 
-    if (saveToStore) {
+    if (saveBiller) {
       window.localStorage.setItem(BILLER, JSON.stringify(biller));
     }
 
@@ -44,7 +39,7 @@ const ExpenseForm = () => {
   };
 
   return (
-    <form onSubmit={saveBiller}>
+    <form onSubmit={submitBiller}>
       <input
         placeholder="Nimi"
         name="name"
@@ -80,12 +75,12 @@ const ExpenseForm = () => {
         onChange={handleBillerChange}
       />
 
-      <label htmlFor="saveToStore">
+      <label htmlFor="saveBiller">
         <input
-          name="saveToStore"
+          name="saveBiller"
           type="checkbox"
-          checked={saveToStore}
-          onChange={handleSaveToStoreChange}
+          checked={saveBiller}
+          onChange={handleSaveBillerChange}
         />
         {' '}
         Tallenna maksutiedot selaimeesi
@@ -97,4 +92,17 @@ const ExpenseForm = () => {
   );
 };
 
-export default ExpenseForm;
+BillerForm.propTypes = {
+  biller: PropTypes.shape({
+    name: PropTypes.string,
+    address: PropTypes.string,
+    zipCode: PropTypes.string,
+    postOffice: PropTypes.string,
+    iban: PropTypes.string,
+  }).isRequired,
+  setBiller: PropTypes.func.isRequired,
+  saveBiller: PropTypes.bool.isRequired,
+  setSaveBiller: PropTypes.func.isRequired,
+};
+
+export default BillerForm;
