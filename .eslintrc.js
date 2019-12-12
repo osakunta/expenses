@@ -23,7 +23,9 @@ module.exports = {
     'react',
   ],
   rules: {
+    'arrow-body-style': 0,
     'react/jsx-filename-extension': 0,
+    'react/no-array-index-key': 0,
   },
   settings: {
     'import/resolver': {
