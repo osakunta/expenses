@@ -12,7 +12,8 @@ function App() {
 
   return (
     <div className="App">
-      Satalinna Foundation Expenses
+      <h1>Satalinnan Säätiön kulukorvaukset</h1>
+
       <BillerForm
         biller={biller}
         setBiller={setBiller}

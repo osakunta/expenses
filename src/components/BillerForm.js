@@ -40,6 +40,8 @@ const BillerForm = (props) => {
 
   return (
     <form onSubmit={submitBiller}>
+      <h2>Omat tiedot</h2>
+
       <input
         placeholder="Nimi"
         name="name"

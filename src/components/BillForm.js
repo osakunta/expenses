@@ -93,6 +93,8 @@ const BillForm = (props) => {
 
   return (
     <form onSubmit={submitExpenses}>
+      <h2>Kulut</h2>
+
       <table>
         <thead>
           <tr>
@@ -111,7 +113,7 @@ const BillForm = (props) => {
       <strong>Yhteensä: {totalPrice()} €</strong>
 
       <label htmlFor="attachments">
-        Liitteet
+        <h2>Liitteet</h2>
 
         <input
           type="file"
