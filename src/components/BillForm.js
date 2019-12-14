@@ -1,58 +1,58 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { emptyBillItem } from 'utils/config';
+import { emptyExpense } from 'utils/config';
 
 const BillForm = (props) => {
   const {
-    bill,
-    setBill,
+    expenses,
+    setExpenses,
     attachments,
     setAttachments,
   } = props;
 
-  const countFromForm = (total, item) => {
-    return typeof item.price === 'number'
-      ? total + item.price
+  const countFromForm = (total, expense) => {
+    return typeof expense.price === 'number'
+      ? total + expense.price
       : total;
   };
 
-  const totalPrice = () => bill.items.reduce(countFromForm, 0);
+  const totalPrice = () => expenses.reduce(countFromForm, 0);
 
-  const handleChangeBillItemName = (changeIndex) => (event) => {
-    const items = bill.items.map((item, index) => {
+  const handleChangeExpenseName = (changeIndex) => (event) => {
+    const newExpenses = expenses.map((expense, index) => {
       return index === changeIndex
-        ? { ...item, name: event.target.value }
-        : item;
+        ? { ...expense, name: event.target.value }
+        : expense;
     });
 
-    setBill({ ...bill, items });
+    setExpenses(newExpenses);
   };
 
-  const handleChangeBillItemPrice = (changeIndex) => (event) => {
+  const handleChangeExpensePrice = (changeIndex) => (event) => {
     const price = event.target.value === ''
       ? ''
       : parseFloat(event.target.value);
 
-    const items = bill.items.map((item, index) => {
+    const newExpenses = expenses.map((expense, index) => {
       return index === changeIndex
-        ? { ...item, price }
-        : item;
+        ? { ...expense, price }
+        : expense;
     });
 
-    setBill({ ...bill, items });
+    setExpenses(newExpenses);
   };
 
-  const handleAddBillItem = () => {
-    const items = bill.items.concat(emptyBillItem);
+  const handleAddExpense = () => {
+    const newExpenses = expenses.concat(emptyExpense);
 
-    setBill({ ...bill, items });
+    setExpenses(newExpenses);
   };
 
-  const handleRemoveBillItem = (removeIndex) => () => {
-    const items = bill.items.filter((item, index) => index !== removeIndex);
+  const handleRemoveExpense = (removeIndex) => () => {
+    const newExpenses = expenses.filter((expense, index) => index !== removeIndex);
 
-    setBill({ ...bill, items });
+    setExpenses(newExpenses);
   };
 
   const handleFileChange = (event) => {
@@ -60,19 +60,19 @@ const BillForm = (props) => {
     console.log(attachments);
   };
 
-  const submitBill = (event) => {
+  const submitExpenses = (event) => {
     event.preventDefault();
-    console.log(bill);
+    console.log(expenses);
   };
 
-  const billItemsForm = bill.items.map((item, index) => (
+  const expensesForm = expenses.map((item, index) => (
     <tr key={index}>
       <td>
         <input
           type="text"
           placeholder="Nimi"
           value={item.name}
-          onChange={handleChangeBillItemName(index)}
+          onChange={handleChangeExpenseName(index)}
         />
       </td>
 
@@ -81,18 +81,18 @@ const BillForm = (props) => {
           type="number"
           placeholder="Hinta"
           value={item.price}
-          onChange={handleChangeBillItemPrice(index)}
+          onChange={handleChangeExpensePrice(index)}
         />
       </td>
 
       <td>
-        <button type="button" onClick={handleRemoveBillItem(index)}>X</button>
+        <button type="button" onClick={handleRemoveExpense(index)}>X</button>
       </td>
     </tr>
   ));
 
   return (
-    <form onSubmit={submitBill}>
+    <form onSubmit={submitExpenses}>
       <table>
         <thead>
           <tr>
@@ -103,11 +103,11 @@ const BillForm = (props) => {
         </thead>
 
         <tbody>
-          {billItemsForm}
+          {expensesForm}
         </tbody>
       </table>
 
-      <button type="button" onClick={handleAddBillItem}>+</button>
+      <button type="button" onClick={handleAddExpense}>+</button>
       <strong>Yhteensä: {totalPrice()} €</strong>
 
       <label htmlFor="attachments">
@@ -128,13 +128,11 @@ const BillForm = (props) => {
 };
 
 BillForm.propTypes = {
-  bill: PropTypes.shape({
-    items: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      price: PropTypes.number,
-    })),
-  }).isRequired,
-  setBill: PropTypes.func.isRequired,
+  expenses: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    price: PropTypes.number,
+  })).isRequired,
+  setExpenses: PropTypes.func.isRequired,
   attachments: PropTypes.arrayOf(PropTypes.files).isRequired,
   setAttachments: PropTypes.func.isRequired,
 };

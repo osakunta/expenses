@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import { newBiller, emptyBill } from 'utils/config';
+import { newBiller, emptyExpenses } from 'utils/config';
 import BillerForm from 'components/BillerForm';
 import BillForm from 'components/BillForm';
 
 function App() {
-  const [bill, setBill] = useState(emptyBill);
+  const [expenses, setExpenses] = useState(emptyExpenses);
   const [biller, setBiller] = useState(newBiller);
   const [attachments, setAttachments] = useState([]);
   const [saveBiller, setSaveBiller] = useState(false);
@@ -22,8 +22,8 @@ function App() {
 
       <BillForm
         biller={biller}
-        bill={bill}
-        setBill={setBill}
+        expenses={expenses}
+        setExpenses={setExpenses}
         attachments={attachments}
         setAttachments={setAttachments}
       />
