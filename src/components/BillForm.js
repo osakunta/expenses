@@ -101,10 +101,13 @@ const BillForm = (props) => {
     <form onSubmit={submitExpenses}>
       <h2>Kulut</h2>
 
-      <label htmlFor="attachments">
+      <label htmlFor="description">
         <h3>Selitys</h3>
 
         <textarea
+          name="description"
+          rows="5"
+          cols="80"
           value={expensesDescription}
           onChange={handleChangeExpensesDescription}
         />
@@ -131,6 +134,7 @@ const BillForm = (props) => {
         <h2>Liitteet</h2>
 
         <input
+          name="attachments"
           type="file"
           accept=".pdf, image/*"
           multiple
