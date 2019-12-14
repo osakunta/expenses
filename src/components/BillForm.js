@@ -7,6 +7,8 @@ const BillForm = (props) => {
   const {
     expenses,
     setExpenses,
+    expensesDescription,
+    setExpensesDescription,
     attachments,
     setAttachments,
   } = props;
@@ -55,6 +57,10 @@ const BillForm = (props) => {
     setExpenses(newExpenses);
   };
 
+  const handleChangeExpensesDescription = (event) => {
+    setExpensesDescription(event.target.value);
+  };
+
   const handleFileChange = (event) => {
     setAttachments(event.target.files);
     console.log(attachments);
@@ -95,6 +101,15 @@ const BillForm = (props) => {
     <form onSubmit={submitExpenses}>
       <h2>Kulut</h2>
 
+      <label htmlFor="attachments">
+        <h3>Selitys</h3>
+
+        <textarea
+          value={expensesDescription}
+          onChange={handleChangeExpensesDescription}
+        />
+      </label>
+
       <table>
         <thead>
           <tr>
@@ -117,7 +132,6 @@ const BillForm = (props) => {
 
         <input
           type="file"
-          name="myFile"
           accept=".pdf, image/*"
           multiple
           onChange={handleFileChange}
@@ -135,6 +149,8 @@ BillForm.propTypes = {
     price: PropTypes.number,
   })).isRequired,
   setExpenses: PropTypes.func.isRequired,
+  expensesDescription: PropTypes.string.isRequired,
+  setExpensesDescription: PropTypes.func.isRequired,
   attachments: PropTypes.arrayOf(PropTypes.files).isRequired,
   setAttachments: PropTypes.func.isRequired,
 };

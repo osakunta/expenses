@@ -6,6 +6,7 @@ import BillForm from 'components/BillForm';
 
 function App() {
   const [expenses, setExpenses] = useState(emptyExpenses);
+  const [expensesDescription, setExpensesDescription] = useState('');
   const [biller, setBiller] = useState(newBiller);
   const [attachments, setAttachments] = useState([]);
   const [saveBiller, setSaveBiller] = useState(false);
@@ -25,6 +26,8 @@ function App() {
         biller={biller}
         expenses={expenses}
         setExpenses={setExpenses}
+        expensesDescription={expensesDescription}
+        setExpensesDescription={setExpensesDescription}
         attachments={attachments}
         setAttachments={setAttachments}
       />
