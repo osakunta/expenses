@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { emptyExpense } from 'utils/config';
+import generatePdf from 'utils/generate-pdf';
 
 const BillForm = (props) => {
   const {
@@ -68,6 +69,7 @@ const BillForm = (props) => {
 
   const submitExpenses = (event) => {
     event.preventDefault();
+    generatePdf(attachments);
     console.log(expenses);
   };
 
@@ -136,7 +138,7 @@ const BillForm = (props) => {
         <input
           name="attachments"
           type="file"
-          accept=".pdf, image/*"
+          accept="image/*"
           multiple
           onChange={handleFileChange}
         />
