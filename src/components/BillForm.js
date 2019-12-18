@@ -2,11 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { emptyExpense } from 'utils/config';
-import generatePdf from 'utils/generate-pdf';
+import totalPrice from 'utils/calculator';
 
 const BillForm = (props) => {
   const {
-    biller,
     expenses,
     setExpenses,
     expensesDescription,
@@ -14,14 +13,6 @@ const BillForm = (props) => {
     attachments,
     setAttachments,
   } = props;
-
-  const countFromForm = (total, expense) => {
-    return typeof expense.price === 'number'
-      ? total + expense.price
-      : total;
-  };
-
-  const totalPrice = () => expenses.reduce(countFromForm, 0).toFixed(2);
 
   const handleChangeExpenseName = (changeIndex) => (event) => {
     const newExpenses = expenses.map((expense, index) => {
@@ -68,21 +59,6 @@ const BillForm = (props) => {
     console.log(attachments);
   };
 
-  const submitExpenses = (event) => {
-    event.preventDefault();
-
-    const bill = {
-      biller,
-      expenses,
-      expensesDescription,
-      expensesTotal: totalPrice(),
-      attachments: Array.from(attachments),
-    };
-
-    console.log(bill);
-    generatePdf(bill);
-  };
-
   const expensesForm = expenses.map((item, index) => (
     <tr key={index}>
       <td>
@@ -110,7 +86,7 @@ const BillForm = (props) => {
   ));
 
   return (
-    <form onSubmit={submitExpenses}>
+    <form>
       <h2>Kulut</h2>
 
       <label htmlFor="description">
@@ -140,7 +116,7 @@ const BillForm = (props) => {
       </table>
 
       <button type="button" onClick={handleAddExpense}>+</button>
-      <strong>Yhteensä: {totalPrice()} €</strong>
+      <strong>Yhteensä: {totalPrice(expenses)} €</strong>
 
       <label htmlFor="attachments">
         <h2>Liitteet</h2>
@@ -153,20 +129,11 @@ const BillForm = (props) => {
           onChange={handleFileChange}
         />
       </label>
-
-      <button type="submit">Tallenna</button>
     </form>
   );
 };
 
 BillForm.propTypes = {
-  biller: PropTypes.shape({
-    name: PropTypes.string,
-    address: PropTypes.string,
-    zipCode: PropTypes.string,
-    postOffice: PropTypes.string,
-    iban: PropTypes.string,
-  }).isRequired,
   expenses: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     price: PropTypes.number,
