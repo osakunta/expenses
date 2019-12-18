@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { newBiller, emptyExpenses } from 'utils/config';
+import { BILLER, newBiller, emptyExpenses } from 'utils/config';
 import totalPrice from 'utils/calculator';
 import generatePdf from 'utils/generate-pdf';
 import BillerForm from 'components/BillerForm';
@@ -11,7 +11,11 @@ function App() {
   const [expensesDescription, setExpensesDescription] = useState('');
   const [biller, setBiller] = useState(newBiller);
   const [attachments, setAttachments] = useState([]);
-  const [saveBiller, setSaveBiller] = useState(false);
+  const [saveBiller, setSaveBiller] = useState(!!window.localStorage.getItem(BILLER));
+
+  const handleSaveBillerChange = (event) => {
+    setSaveBiller(event.target.checked);
+  };
 
   const generateBill = () => {
     const bill = {
@@ -21,6 +25,12 @@ function App() {
       expensesTotal: totalPrice(expenses),
       attachments: Array.from(attachments),
     };
+
+    if (saveBiller) {
+      window.localStorage.setItem(BILLER, JSON.stringify(biller));
+    } else {
+      window.localStorage.removeItem(BILLER);
+    }
 
     generatePdf(bill);
   };
@@ -32,8 +42,6 @@ function App() {
       <BillerForm
         biller={biller}
         setBiller={setBiller}
-        saveBiller={saveBiller}
-        setSaveBiller={setSaveBiller}
       />
 
       <BillForm
@@ -44,6 +52,17 @@ function App() {
         attachments={attachments}
         setAttachments={setAttachments}
       />
+
+      <label htmlFor="saveBiller">
+        <input
+          name="saveBiller"
+          type="checkbox"
+          checked={saveBiller}
+          onChange={handleSaveBillerChange}
+        />
+        {' '}
+        Tallenna maksutiedot selaimeesi
+      </label>
 
       <button type="button" onClick={generateBill}>Luo lasku</button>
     </div>
