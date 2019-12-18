@@ -76,7 +76,7 @@ const BillForm = (props) => {
       expenses,
       expensesDescription,
       expensesTotal: totalPrice(),
-      attachments,
+      attachments: Array.from(attachments),
     };
 
     console.log(bill);

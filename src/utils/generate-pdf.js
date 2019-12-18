@@ -1,5 +1,31 @@
 import * as JsPdf from 'jspdf';
 
+const readFile = (file) => {
+  const reader = new FileReader();
+  const image = new Image();
+
+  return new Promise((resolve, reject) => {
+    reader.onerror = () => {
+      reader.abort();
+      reject(new DOMException('Problem parsing input file.'));
+    };
+
+    reader.onload = () => {
+      image.onerror = () => {
+        reject(new DOMException('Problem loading image from FileLoader.'));
+      };
+
+      image.onload = () => {
+        resolve(image);
+      };
+
+      image.src = reader.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+};
+
 const boldText = (doc, string, x, y, options) => {
   doc.setFontType('bold');
   doc.text(string, x, y, options);
@@ -69,7 +95,22 @@ const generatePdf = async (bill) => {
   const date = new Date();
 
   generateBill(doc, bill, date);
-  doc.save(`lasku_${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.pdf`);
+
+  const generatedAttachments = bill.attachments.map(async (attachment) => {
+    try {
+      const image = await readFile(attachment);
+      const aspectRatio = image.width / image.height;
+
+      doc.addPage();
+      doc.addImage(image, 'JPEG', 15, 15, 180, 180 * aspectRatio);
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  Promise.all(generatedAttachments)
+    .then(() => doc.save(`lasku_${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.pdf`))
+    .catch((error) => console.error(error));
 };
 
 export default generatePdf;
