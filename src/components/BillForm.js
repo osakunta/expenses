@@ -21,7 +21,7 @@ const BillForm = (props) => {
       : total;
   };
 
-  const totalPrice = () => expenses.reduce(countFromForm, 0);
+  const totalPrice = () => expenses.reduce(countFromForm, 0).toFixed(2);
 
   const handleChangeExpenseName = (changeIndex) => (event) => {
     const newExpenses = expenses.map((expense, index) => {

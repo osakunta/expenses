@@ -90,7 +90,7 @@ const generateBill = (doc, bill, date) => {
 
   doc.rect(105, 270, 90, 12);
   doc.text('Yhteensä EUR:', 105 + 2, 275);
-  doc.text(bill.expensesTotal.toFixed(2), 105 + 2, 280);
+  doc.text(bill.expensesTotal, 105 + 2, 280);
 };
 
 const generatePdf = async (bill) => {
