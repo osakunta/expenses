@@ -6,6 +6,7 @@ import generatePdf from 'utils/generate-pdf';
 
 const BillForm = (props) => {
   const {
+    biller,
     expenses,
     setExpenses,
     expensesDescription,
@@ -69,8 +70,17 @@ const BillForm = (props) => {
 
   const submitExpenses = (event) => {
     event.preventDefault();
-    generatePdf(attachments);
-    console.log(expenses);
+
+    const bill = {
+      biller,
+      expenses,
+      expensesDescription,
+      expensesTotal: totalPrice(),
+      attachments,
+    };
+
+    console.log(bill);
+    generatePdf(bill);
   };
 
   const expensesForm = expenses.map((item, index) => (
@@ -150,6 +160,13 @@ const BillForm = (props) => {
 };
 
 BillForm.propTypes = {
+  biller: PropTypes.shape({
+    name: PropTypes.string,
+    address: PropTypes.string,
+    zipCode: PropTypes.string,
+    postOffice: PropTypes.string,
+    iban: PropTypes.string,
+  }).isRequired,
   expenses: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
     price: PropTypes.number,
