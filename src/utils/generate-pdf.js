@@ -79,7 +79,7 @@ const generateBill = (doc, bill, date) => {
   doc.rect(15, 110 + 2 + totalOffset, 150, 7);
   boldText(doc, 'YHTEENSÄ', 15 + 2, 115 + 2 + totalOffset);
   doc.rect(165, 110 + 2 + totalOffset, 30, 7);
-  boldText(doc, bill.expensesTotal.toFixed(2), 195 - 2, 115 + 2 + totalOffset, { align: 'right' });
+  boldText(doc, bill.expensesTotal, 195 - 2, 115 + 2 + totalOffset, { align: 'right' });
 
   boldText(doc, 'LIITTEET', 15, 260);
   doc.text(`Kappaletta: ${bill.attachments.length}`, 15, 265);
