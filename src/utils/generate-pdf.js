@@ -81,6 +81,9 @@ const generateBill = (doc, bill, date) => {
   doc.rect(165, 110 + 2 + totalOffset, 30, 7);
   boldText(doc, bill.expensesTotal.toFixed(2), 195 - 2, 115 + 2 + totalOffset, { align: 'right' });
 
+  boldText(doc, 'LIITTEET', 15, 260);
+  doc.text(`Kappaletta: ${bill.attachments.length}`, 15, 265);
+
   doc.rect(15, 270, 90, 12);
   doc.text('IBAN:', 15 + 2, 275);
   doc.text(bill.biller.iban, 15 + 2, 280);
@@ -99,10 +102,10 @@ const generatePdf = async (bill) => {
   const generatedAttachments = bill.attachments.map(async (attachment) => {
     try {
       const image = await readFile(attachment);
-      const aspectRatio = image.width / image.height;
+      const ratio = image.height / image.width;
 
       doc.addPage();
-      doc.addImage(image, 'JPEG', 15, 15, 180, 180 * aspectRatio);
+      doc.addImage(image, 'JPEG', 15, 15, 180, 180 * ratio);
     } catch (error) {
       console.error(error);
     }
