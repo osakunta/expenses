@@ -1,6 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import {
+  Button,
+  Divider,
+  Header,
+  Icon,
+  Input,
+  Table,
+  TextArea,
+} from 'semantic-ui-react';
+
 import { emptyExpense } from 'utils/config';
 import totalPrice from 'utils/calculator';
 
@@ -25,9 +35,7 @@ const BillForm = (props) => {
   };
 
   const handleChangeExpensePrice = (changeIndex) => (event) => {
-    const price = event.target.value === ''
-      ? ''
-      : parseFloat(event.target.value);
+    const price = event.target.value;
 
     const newExpenses = expenses.map((expense, index) => {
       return index === changeIndex
@@ -60,83 +68,101 @@ const BillForm = (props) => {
   };
 
   const expensesForm = expenses.map((item, index) => (
-    <tr key={index}>
-      <td>
-        <input
+    <Table.Row key={index}>
+      <Table.Cell>
+        <Input
+          fluid
           type="text"
           placeholder="Nimi"
           value={item.name}
           onChange={handleChangeExpenseName(index)}
         />
-      </td>
+      </Table.Cell>
 
-      <td>
-        <input
-          type="number"
+      <Table.Cell>
+        <Input
+          fluid
+          type="text"
           placeholder="Hinta"
           value={item.price}
           onChange={handleChangeExpensePrice(index)}
         />
-      </td>
+      </Table.Cell>
 
-      <td>
-        <button type="button" onClick={handleRemoveExpense(index)}>X</button>
-      </td>
-    </tr>
+      <Table.Cell collapsing>
+        <Button onClick={handleRemoveExpense(index)}>
+          <Icon name="trash" style={{ margin: 0 }} />
+        </Button>
+      </Table.Cell>
+    </Table.Row>
   ));
 
   return (
-    <form>
-      <h2>Kulut</h2>
+    <>
+      <Header as="h2">Kulut</Header>
 
-      <label htmlFor="description">
-        <h3>Selitys</h3>
+      <Header as="h3">Selitys</Header>
 
-        <textarea
-          name="description"
-          rows="5"
-          cols="80"
-          value={expensesDescription}
-          onChange={handleChangeExpensesDescription}
-        />
-      </label>
+      <TextArea
+        name="description"
+        value={expensesDescription}
+        onChange={handleChangeExpensesDescription}
+      />
 
-      <table>
-        <thead>
-          <tr>
-            <th>Artikkeli</th>
-            <th>Hinta (€)</th>
-            <th>Poista</th>
-          </tr>
-        </thead>
+      <Table unstackable>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Artikkeli</Table.HeaderCell>
+            <Table.HeaderCell width={4}>Hinta (EUR)</Table.HeaderCell>
+            <Table.HeaderCell />
+          </Table.Row>
+        </Table.Header>
 
-        <tbody>
+        <Table.Body>
           {expensesForm}
-        </tbody>
-      </table>
 
-      <button type="button" onClick={handleAddExpense}>+</button>
-      <strong>Yhteensä: {totalPrice(expenses)} €</strong>
+          <Table.Row>
+            <Table.Cell colSpan="3">
+              <Button fluid onClick={handleAddExpense}>Lisää rivi</Button>
+            </Table.Cell>
+          </Table.Row>
+        </Table.Body>
 
-      <label htmlFor="attachments">
-        <h2>Liitteet</h2>
+        <Table.Footer>
+          <Table.Row>
+            <Table.HeaderCell>
+              Yhteensä
+            </Table.HeaderCell>
 
-        <input
-          name="attachments"
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handleFileChange}
-        />
-      </label>
-    </form>
+            <Table.HeaderCell>
+              {totalPrice(expenses)}
+            </Table.HeaderCell>
+
+            <Table.HeaderCell />
+          </Table.Row>
+        </Table.Footer>
+      </Table>
+
+      <Divider hidden />
+
+      <Header as="h2">Liitteet</Header>
+
+      <Input
+        fluid
+        name="attachments"
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handleFileChange}
+      />
+    </>
   );
 };
 
 BillForm.propTypes = {
   expenses: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string,
-    price: PropTypes.number,
+    price: PropTypes.string,
   })).isRequired,
   setExpenses: PropTypes.func.isRequired,
   expensesDescription: PropTypes.string.isRequired,

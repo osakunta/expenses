@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import {
+  Button,
+  Checkbox,
+  Container,
+  Divider,
+  Form,
+  Header,
+} from 'semantic-ui-react';
 
 import { BILLER, newBiller, emptyExpenses } from 'utils/config';
 import totalPrice from 'utils/calculator';
@@ -36,36 +44,46 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Satalinnan Säätiön kulukorvaukset</h1>
+    <Container>
+      <Divider hidden />
 
-      <BillerForm
-        biller={biller}
-        setBiller={setBiller}
-      />
+      <Header as="h1">Satalinnan Säätiön kulukorvaukset</Header>
 
-      <BillForm
-        expenses={expenses}
-        setExpenses={setExpenses}
-        expensesDescription={expensesDescription}
-        setExpensesDescription={setExpensesDescription}
-        attachments={attachments}
-        setAttachments={setAttachments}
-      />
+      <Divider hidden />
 
-      <label htmlFor="saveBiller">
-        <input
-          name="saveBiller"
-          type="checkbox"
+      <Form>
+        <BillerForm
+          biller={biller}
+          setBiller={setBiller}
+        />
+        <Divider hidden />
+
+        <BillForm
+          expenses={expenses}
+          setExpenses={setExpenses}
+          expensesDescription={expensesDescription}
+          setExpensesDescription={setExpensesDescription}
+          attachments={attachments}
+          setAttachments={setAttachments}
+        />
+
+        <Divider hidden />
+
+        <Checkbox
+          toggle
           checked={saveBiller}
           onChange={handleSaveBillerChange}
+          name="saveBiller"
+          label="Tallenna maksutiedot selaimeesi"
         />
-        {' '}
-        Tallenna maksutiedot selaimeesi
-      </label>
 
-      <button type="button" onClick={generateBill}>Luo lasku</button>
-    </div>
+        <Divider hidden />
+
+        <Button fluid primary onClick={generateBill}>Luo lasku</Button>
+      </Form>
+
+      <Divider hidden />
+    </Container>
   );
 }
 

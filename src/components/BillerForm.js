@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Input } from 'semantic-ui-react';
 
 const BillerForm = (props) => {
   const {
@@ -15,35 +16,40 @@ const BillerForm = (props) => {
     <>
       <h2>Omat tiedot</h2>
 
-      <input
+      <Input
+        fluid
         placeholder="Nimi"
         name="name"
         value={biller.name}
         onChange={handleBillerChange}
       />
 
-      <input
+      <Input
+        fluid
         placeholder="Osoite"
         name="address"
         value={biller.address}
         onChange={handleBillerChange}
       />
 
-      <input
+      <Input
+        fluid
         placeholder="Postinumero"
         name="zipCode"
         value={biller.zipCode}
         onChange={handleBillerChange}
       />
 
-      <input
+      <Input
+        fluid
         placeholder="Postitoimipaikka"
         name="postOffice"
         value={biller.postOffice}
         onChange={handleBillerChange}
       />
 
-      <input
+      <Input
+        fluid
         placeholder="Maksuyhteys (IBAN)"
         name="iban"
         value={biller.iban}
