@@ -12,7 +12,7 @@ export const newBiller = JSON.parse(window.localStorage.getItem(BILLER)) || empt
 
 export const emptyExpense = {
   name: '',
-  price: 0,
+  price: '0',
 };
 
 export const emptyExpenses = [emptyExpense];

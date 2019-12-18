@@ -167,7 +167,7 @@ BillForm.propTypes = {
   setExpenses: PropTypes.func.isRequired,
   expensesDescription: PropTypes.string.isRequired,
   setExpensesDescription: PropTypes.func.isRequired,
-  attachments: PropTypes.arrayOf(PropTypes.files).isRequired,
+  attachments: PropTypes.array.isRequired,
   setAttachments: PropTypes.func.isRequired,
 };
 

@@ -21,8 +21,8 @@ function App() {
   const [attachments, setAttachments] = useState([]);
   const [saveBiller, setSaveBiller] = useState(!!window.localStorage.getItem(BILLER));
 
-  const handleSaveBillerChange = (event) => {
-    setSaveBiller(event.target.checked);
+  const handleSaveBillerChange = () => {
+    setSaveBiller(!saveBiller);
   };
 
   const generateBill = () => {
@@ -73,7 +73,6 @@ function App() {
           toggle
           checked={saveBiller}
           onChange={handleSaveBillerChange}
-          name="saveBiller"
           label="Tallenna maksutiedot selaimeesi"
         />
 
