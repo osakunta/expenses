@@ -71,7 +71,7 @@ const generateBill = (doc, bill, date) => {
     doc.rect(15, 110 + 2 + offset, 150, 7);
     doc.text(expense.name, 15 + 2, 115 + 2 + offset);
     doc.rect(165, 110 + 2 + offset, 30, 7);
-    doc.text(expense.price.toFixed(2), 195 - 2, 115 + 2 + offset, { align: 'right' });
+    doc.text(parseFloat(expense.price).toFixed(2), 195 - 2, 115 + 2 + offset, { align: 'right' });
 
     return expense;
   });
