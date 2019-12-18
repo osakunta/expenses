@@ -19,8 +19,12 @@ jobs:
           paths:
             - ~/.cache/yarn
       - run:
+          name: Test
+          command: CI=true yarn test
+      - run:
           name: Build
           command: yarn build
+          only-branch: master
       - run:
           name: Firebase Deploy
           command: ./node_modules/.bin/firebase deploy --token "$FIREBASE_TOKEN" --only hosting
