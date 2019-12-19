@@ -101,10 +101,9 @@ const BillForm = (props) => {
     <>
       <Header as="h2">Kulut</Header>
 
-      <Header as="h3">Selitys</Header>
-
       <TextArea
         name="description"
+        placeholder="Selitys"
         value={expensesDescription}
         onChange={handleChangeExpensesDescription}
       />
