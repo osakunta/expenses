@@ -1,6 +1,8 @@
 import * as JsPdf from 'jspdf';
 import { PDFDocument } from 'pdf-lib';
 
+import { fileTypeFromDataURL, readFile, loadImage } from 'utils/file-reader';
+
 const savePdf = async (pdf, fileName) => {
   const pdfBytes = await pdf.save();
   const blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -9,32 +11,6 @@ const savePdf = async (pdf, fileName) => {
   link.href = window.URL.createObjectURL(blob);
   link.download = fileName;
   link.click();
-};
-
-const readFile = (file) => {
-  const reader = new FileReader();
-  const image = new Image();
-
-  return new Promise((resolve, reject) => {
-    reader.onerror = () => {
-      reader.abort();
-      reject(new DOMException('Problem parsing input file.'));
-    };
-
-    reader.onload = () => {
-      image.onerror = () => {
-        reject(new DOMException('Problem loading image from FileLoader.'));
-      };
-
-      image.onload = () => {
-        resolve(image);
-      };
-
-      image.src = reader.result;
-    };
-
-    reader.readAsDataURL(file);
-  });
 };
 
 const boldText = (doc, string, x, y, options) => {
@@ -107,10 +83,9 @@ const generateBill = (bill, date) => {
   return doc.output('arraybuffer');
 };
 
-const generateImagePage = async (pdfDoc, attachment) => {
+const generateImagePage = async (pdfDoc, image) => {
   try {
     const doc = new JsPdf();
-    const image = await readFile(attachment);
     const ratio = image.height / image.width;
 
     doc.addImage(image, 'JPEG', 15, 15, 180, 180 * ratio);
@@ -124,13 +99,28 @@ const generateImagePage = async (pdfDoc, attachment) => {
   }
 };
 
+const concatPdf = async (pdfDoc, pdfDataURL) => {
+  const attachmentDoc = await PDFDocument.load(pdfDataURL);
+  const attachmentPages = await pdfDoc.copyPages(attachmentDoc, attachmentDoc.getPageIndices());
+
+  attachmentPages.forEach((attachmentPage) => pdfDoc.addPage(attachmentPage));
+};
+
 const generatePdf = async (bill) => {
   const date = new Date();
   const fileName = `lasku_${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.pdf`;
   const pdfDoc = await PDFDocument.load(generateBill(bill, date));
 
   const generatedAttachments = bill.attachments.map(async (attachment) => {
-    await generateImagePage(pdfDoc, attachment);
+    const dataURL = await readFile(attachment);
+
+    if (fileTypeFromDataURL(dataURL) === 'application/pdf') {
+      await concatPdf(pdfDoc, dataURL);
+    } else {
+      const image = await loadImage(dataURL);
+
+      await generateImagePage(pdfDoc, image);
+    }
   });
 
   Promise.all(generatedAttachments)
