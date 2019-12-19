@@ -151,7 +151,7 @@ const BillForm = (props) => {
         fluid
         name="attachments"
         type="file"
-        accept="image/*"
+        accept="application/pdf, image/*"
         multiple
         onChange={handleFileChange}
       />

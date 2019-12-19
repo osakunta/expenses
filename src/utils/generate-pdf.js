@@ -1,29 +1,16 @@
 import * as JsPdf from 'jspdf';
+import { PDFDocument } from 'pdf-lib';
 
-const readFile = (file) => {
-  const reader = new FileReader();
-  const image = new Image();
+import { fileTypeFromDataURL, readFile, loadImage } from 'utils/file-reader';
 
-  return new Promise((resolve, reject) => {
-    reader.onerror = () => {
-      reader.abort();
-      reject(new DOMException('Problem parsing input file.'));
-    };
+const savePdf = async (pdf, fileName) => {
+  const pdfBytes = await pdf.save();
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const link = document.createElement('a');
 
-    reader.onload = () => {
-      image.onerror = () => {
-        reject(new DOMException('Problem loading image from FileLoader.'));
-      };
-
-      image.onload = () => {
-        resolve(image);
-      };
-
-      image.src = reader.result;
-    };
-
-    reader.readAsDataURL(file);
-  });
+  link.href = window.URL.createObjectURL(blob);
+  link.download = fileName;
+  link.click();
 };
 
 const boldText = (doc, string, x, y, options) => {
@@ -32,7 +19,8 @@ const boldText = (doc, string, x, y, options) => {
   doc.setFontType('normal');
 };
 
-const generateBill = (doc, bill, date) => {
+const generateBill = (bill, date) => {
+  const doc = new JsPdf();
   const splitDescription = doc.splitTextToSize(bill.expensesDescription, 280);
   const totalOffset = 7 * (bill.expenses.length + 1);
 
@@ -91,28 +79,52 @@ const generateBill = (doc, bill, date) => {
   doc.rect(105, 270, 90, 12);
   doc.text('Yhteensä EUR:', 105 + 2, 275);
   doc.text(bill.expensesTotal, 105 + 2, 280);
+
+  return doc.output('arraybuffer');
+};
+
+const generateImagePage = async (pdfDoc, image) => {
+  try {
+    const doc = new JsPdf();
+    const ratio = image.height / image.width;
+
+    doc.addImage(image, 'JPEG', 15, 15, 180, 180 * ratio);
+
+    const attachmentDoc = await PDFDocument.load(doc.output('arraybuffer'));
+    const [attachmentPage] = await pdfDoc.copyPages(attachmentDoc, [0]);
+
+    pdfDoc.addPage(attachmentPage);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const concatPdf = async (pdfDoc, pdfDataURL) => {
+  const attachmentDoc = await PDFDocument.load(pdfDataURL);
+  const attachmentPages = await pdfDoc.copyPages(attachmentDoc, attachmentDoc.getPageIndices());
+
+  attachmentPages.forEach((attachmentPage) => pdfDoc.addPage(attachmentPage));
 };
 
 const generatePdf = async (bill) => {
-  const doc = new JsPdf();
   const date = new Date();
-
-  generateBill(doc, bill, date);
+  const fileName = `lasku_${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.pdf`;
+  const pdfDoc = await PDFDocument.load(generateBill(bill, date));
 
   const generatedAttachments = bill.attachments.map(async (attachment) => {
-    try {
-      const image = await readFile(attachment);
-      const ratio = image.height / image.width;
+    const dataURL = await readFile(attachment);
 
-      doc.addPage();
-      doc.addImage(image, 'JPEG', 15, 15, 180, 180 * ratio);
-    } catch (error) {
-      console.error(error);
+    if (fileTypeFromDataURL(dataURL) === 'application/pdf') {
+      await concatPdf(pdfDoc, dataURL);
+    } else {
+      const image = await loadImage(dataURL);
+
+      await generateImagePage(pdfDoc, image);
     }
   });
 
   Promise.all(generatedAttachments)
-    .then(() => doc.save(`lasku_${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.pdf`))
+    .then(() => savePdf(pdfDoc, fileName))
     .catch((error) => console.error(error));
 };
 
