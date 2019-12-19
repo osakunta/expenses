@@ -27,7 +27,7 @@ const generateBill = (bill, date) => {
   doc.setFontSize(10);
 
   boldText(doc, 'LASKU', 170, 20);
-  doc.text(`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`, 170, 25);
+  doc.text(`${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`, 170, 25);
 
   boldText(doc, 'LASKUTTAJA', 15, 20);
   doc.text(bill.biller.name, 15, 25);
@@ -108,7 +108,7 @@ const concatPdf = async (pdfDoc, pdfDataURL) => {
 
 const generatePdf = async (bill) => {
   const date = new Date();
-  const fileName = `lasku_${date.getFullYear()}-${date.getMonth()}-${date.getDate()}.pdf`;
+  const fileName = `lasku_${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.pdf`;
   const pdfDoc = await PDFDocument.load(generateBill(bill, date));
 
   const generatedAttachments = bill.attachments.map(async (attachment) => {
