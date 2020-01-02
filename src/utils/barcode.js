@@ -12,7 +12,7 @@ const getSerialNumber = (iban, price, referenceNumber, dueDate) => {
     var result = "4";
     result += iban.split(" ").join("").substring(2);
     result += Math.floor(price).toString().padStart(6, padChar);
-    result += Math.floor((price - Math.floor(price)) * 100).toString();
+    result += Math.floor((price - Math.floor(price)) * 100).toString().padStart(2, padChar);
     result += padChar.repeat(3);
     result += referenceNumber.toString().padStart(20, padChar);
     result += dueDate.getFullYear().toString().substring(2);

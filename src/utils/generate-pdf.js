@@ -5,6 +5,7 @@ import { fileTypeFromDataURL, readFile, loadImage } from 'utils/file-reader';
 
 import { createCanvas } from "canvas";
 import { getSerialNumber, writeOnCanvas } from "./barcode";
+import { getDatePlusDeltaDays , getFinnishDateRepr } from './date';
 
 const savePdf = async (pdf, fileName) => {
   const pdfBytes = await pdf.save();
@@ -75,24 +76,35 @@ const generateBill = (bill, date) => {
   boldText(doc, 'LIITTEET', 15, 250);
   doc.text(`Kappaletta: ${bill.attachments.length}`, 15, 255);
 
-  doc.rect(15, 260, 90, 12);
+  doc.rect(15, 260, 60, 12);
   doc.text('IBAN:', 15 + 2, 265);
   doc.text(bill.biller.iban, 15 + 2, 270);
 
-  doc.rect(105, 260, 90, 12);
-  doc.text('Yhteensä EUR:', 105 + 2, 265);
-  doc.text(bill.expensesTotal, 105 + 2, 270);
+  doc.rect(75, 260, 60, 12);
+  doc.text('Yhteensä EUR:', 75 + 2, 265);
+  doc.text(bill.expensesTotal, 75 + 2, 270);
 
-  let canvas = createCanvas();
-  let context = canvas.getContext('2d');
-  writeOnCanvas(canvas, getSerialNumber(bill.biller.iban, bill.expensesTotal, "3", new Date(2019, 2, 2)));
-  context.fill();
+  let dueDate = getDatePlusDeltaDays(new Date(), 14);
 
-  var img = canvas.toDataURL("image/jpeg", 1.0);
-  doc.addImage(img, 'JPEG', 35, 275);
+  doc.rect(135, 260, 60, 12);
+  doc.text('Eräpäivä:', 135 + 2, 265);
+  doc.text(getFinnishDateRepr(dueDate), 135 + 2, 270);
+
+  writeBarcodeToDoc(doc, bill, "13", dueDate, 35, 275);
 
   return doc.output('arraybuffer');
 };
+
+const writeBarcodeToDoc = (doc, bill, billReferenceNumber, billDueDate, x, y) => {
+  let canvas = createCanvas();
+  let context = canvas.getContext('2d');
+  let serialNumber = getSerialNumber(bill.biller.iban, bill.expensesTotal, billReferenceNumber, billDueDate);
+  writeOnCanvas(canvas, serialNumber);
+  context.fill();
+
+  var barcode = canvas.toDataURL("image/png", 1.0);
+  doc.addImage(barcode, 'PNG', x, y);
+}
 
 const generateImagePage = async (pdfDoc, image) => {
   try {
