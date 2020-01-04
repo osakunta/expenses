@@ -19,6 +19,9 @@ jobs:
           paths:
             - ~/.cache/yarn
       - run:
+          name: Lint
+          command: yarn lint
+      - run:
           name: Test
           command: CI=true yarn test
       - run:
