@@ -20,7 +20,6 @@ const savePdf = async (pdf, fileName) => {
 const writeBarcodeToDoc = (doc, bill, billReferenceNumber, billDueDate, x, y) => {
   const canvas = createCanvas();
   const context = canvas.getContext('2d');
-  const barcode = canvas.toDataURL('image/png', 1.0);
   const serialNumber = getSerialNumber(
     bill.biller.iban,
     bill.expensesTotal,
@@ -30,6 +29,9 @@ const writeBarcodeToDoc = (doc, bill, billReferenceNumber, billDueDate, x, y) =>
 
   writeOnCanvas(canvas, serialNumber);
   context.fill();
+
+  const barcode = canvas.toDataURL('image/png', 1.0);
+
   doc.addImage(barcode, 'PNG', x, y);
 };
 
