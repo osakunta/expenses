@@ -3,6 +3,10 @@ import { PDFDocument } from 'pdf-lib';
 
 import { fileTypeFromDataURL, readFile, loadImage } from 'utils/file-reader';
 
+import { createCanvas } from "canvas";
+import { getSerialNumber, writeOnCanvas } from "./barcode";
+import { getDatePlusDeltaDays , getFinnishDateRepr } from './date';
+
 const savePdf = async (pdf, fileName) => {
   const pdfBytes = await pdf.save();
   const blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -69,19 +73,38 @@ const generateBill = (bill, date) => {
   doc.rect(165, 110 + 2 + totalOffset, 30, 7);
   boldText(doc, bill.expensesTotal, 195 - 2, 115 + 2 + totalOffset, { align: 'right' });
 
-  boldText(doc, 'LIITTEET', 15, 260);
-  doc.text(`Kappaletta: ${bill.attachments.length}`, 15, 265);
+  boldText(doc, 'LIITTEET', 15, 250);
+  doc.text(`Kappaletta: ${bill.attachments.length}`, 15, 255);
 
-  doc.rect(15, 270, 90, 12);
-  doc.text('IBAN:', 15 + 2, 275);
-  doc.text(bill.biller.iban, 15 + 2, 280);
+  doc.rect(15, 260, 60, 12);
+  doc.text('IBAN:', 15 + 2, 265);
+  doc.text(bill.biller.iban, 15 + 2, 270);
 
-  doc.rect(105, 270, 90, 12);
-  doc.text('Yhteensä EUR:', 105 + 2, 275);
-  doc.text(bill.expensesTotal, 105 + 2, 280);
+  doc.rect(75, 260, 60, 12);
+  doc.text('Yhteensä EUR:', 75 + 2, 265);
+  doc.text(bill.expensesTotal, 75 + 2, 270);
+
+  let dueDate = getDatePlusDeltaDays(new Date(), 14);
+
+  doc.rect(135, 260, 60, 12);
+  doc.text('Eräpäivä:', 135 + 2, 265);
+  doc.text(getFinnishDateRepr(dueDate), 135 + 2, 270);
+
+  writeBarcodeToDoc(doc, bill, "13", dueDate, 35, 275);
 
   return doc.output('arraybuffer');
 };
+
+const writeBarcodeToDoc = (doc, bill, billReferenceNumber, billDueDate, x, y) => {
+  let canvas = createCanvas();
+  let context = canvas.getContext('2d');
+  let serialNumber = getSerialNumber(bill.biller.iban, bill.expensesTotal, billReferenceNumber, billDueDate);
+  writeOnCanvas(canvas, serialNumber);
+  context.fill();
+
+  var barcode = canvas.toDataURL("image/png", 1.0);
+  doc.addImage(barcode, 'PNG', x, y);
+}
 
 const generateImagePage = async (pdfDoc, image) => {
   try {
