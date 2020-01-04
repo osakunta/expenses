@@ -3,9 +3,9 @@ import { PDFDocument } from 'pdf-lib';
 
 import { fileTypeFromDataURL, readFile, loadImage } from 'utils/file-reader';
 
-import { createCanvas } from "canvas";
-import { getSerialNumber, writeOnCanvas } from "./barcode";
-import { getDatePlusDeltaDays , getFinnishDateRepr } from './date';
+import { createCanvas } from 'canvas';
+import { getSerialNumber, writeOnCanvas } from './barcode';
+import { getDatePlusDeltaDays, getFinnishDateRepr } from './date';
 
 const savePdf = async (pdf, fileName) => {
   const pdfBytes = await pdf.save();
@@ -15,6 +15,22 @@ const savePdf = async (pdf, fileName) => {
   link.href = window.URL.createObjectURL(blob);
   link.download = fileName;
   link.click();
+};
+
+const writeBarcodeToDoc = (doc, bill, billReferenceNumber, billDueDate, x, y) => {
+  const canvas = createCanvas();
+  const context = canvas.getContext('2d');
+  const barcode = canvas.toDataURL('image/png', 1.0);
+  const serialNumber = getSerialNumber(
+    bill.biller.iban,
+    bill.expensesTotal,
+    billReferenceNumber,
+    billDueDate,
+  );
+
+  writeOnCanvas(canvas, serialNumber);
+  context.fill();
+  doc.addImage(barcode, 'PNG', x, y);
 };
 
 const boldText = (doc, string, x, y, options) => {
@@ -27,6 +43,7 @@ const generateBill = (bill, date) => {
   const doc = new JsPdf();
   const splitDescription = doc.splitTextToSize(bill.expensesDescription, 280);
   const totalOffset = 7 * (bill.expenses.length + 1);
+  const dueDate = getDatePlusDeltaDays(new Date(), 14);
 
   doc.setFontSize(10);
 
@@ -84,27 +101,14 @@ const generateBill = (bill, date) => {
   doc.text('Yhteensä EUR:', 75 + 2, 265);
   doc.text(bill.expensesTotal, 75 + 2, 270);
 
-  let dueDate = getDatePlusDeltaDays(new Date(), 14);
-
   doc.rect(135, 260, 60, 12);
   doc.text('Eräpäivä:', 135 + 2, 265);
   doc.text(getFinnishDateRepr(dueDate), 135 + 2, 270);
 
-  writeBarcodeToDoc(doc, bill, "13", dueDate, 35, 275);
+  writeBarcodeToDoc(doc, bill, '13', dueDate, 35, 275);
 
   return doc.output('arraybuffer');
 };
-
-const writeBarcodeToDoc = (doc, bill, billReferenceNumber, billDueDate, x, y) => {
-  let canvas = createCanvas();
-  let context = canvas.getContext('2d');
-  let serialNumber = getSerialNumber(bill.biller.iban, bill.expensesTotal, billReferenceNumber, billDueDate);
-  writeOnCanvas(canvas, serialNumber);
-  context.fill();
-
-  var barcode = canvas.toDataURL("image/png", 1.0);
-  doc.addImage(barcode, 'PNG', x, y);
-}
 
 const generateImagePage = async (pdfDoc, image) => {
   try {
