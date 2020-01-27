@@ -3,8 +3,7 @@ import { PDFDocument } from 'pdf-lib';
 
 import { fileTypeFromDataURL, readFile, loadImage } from 'utils/file-reader';
 
-import { createCanvas } from 'canvas';
-import { getSerialNumber, writeOnCanvas } from './barcode';
+import generateBarcode from './barcode';
 import { getDatePlusDeltaDays, getFinnishDateRepr } from './date';
 
 const savePdf = async (pdf, fileName) => {
@@ -17,20 +16,13 @@ const savePdf = async (pdf, fileName) => {
   link.click();
 };
 
-const writeBarcodeToDoc = (doc, bill, billReferenceNumber, billDueDate, x, y) => {
-  const canvas = createCanvas();
-  const context = canvas.getContext('2d');
-  const serialNumber = getSerialNumber(
-    bill.biller.iban,
-    bill.expensesTotal,
-    billReferenceNumber,
-    billDueDate,
-  );
-
-  writeOnCanvas(canvas, serialNumber);
-  context.fill();
-
-  const barcode = canvas.toDataURL('image/png', 1.0);
+const writeBarcodeToDoc = (doc, bill, referenceNumber, dueDate, x, y) => {
+  const barcode = generateBarcode({
+    iban: bill.biller.iban,
+    totalPrice: bill.expensesTotal,
+    referenceNumber,
+    dueDate,
+  });
 
   doc.addImage(barcode, 'PNG', x, y);
 };
