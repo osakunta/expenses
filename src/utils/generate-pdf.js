@@ -2,9 +2,8 @@ import * as JsPdf from 'jspdf';
 import { PDFDocument } from 'pdf-lib';
 
 import { fileTypeFromDataURL, readFile, loadImage } from 'utils/file-reader';
-
-import generateBarcode from './barcode';
-import { getDatePlusDeltaDays, getFinnishDateRepr } from './date';
+import { getDatePlusDeltaDays, getFinnishDateRepr } from 'utils/date';
+import generateBarcode from 'utils/barcode';
 
 const savePdf = async (pdf, fileName) => {
   const pdfBytes = await pdf.save();
