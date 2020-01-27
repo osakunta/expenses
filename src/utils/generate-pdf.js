@@ -15,15 +15,25 @@ const savePdf = async (pdf, fileName) => {
   link.click();
 };
 
-const writeBarcodeToDoc = (doc, bill, referenceNumber, dueDate, x, y) => {
+const writeBarcodeToDoc = async (doc, bill, dueDate) => {
   const barcode = generateBarcode({
     iban: bill.biller.iban,
     totalPrice: bill.expensesTotal,
-    referenceNumber,
+    referenceNumber: '13',
     dueDate,
   });
 
-  doc.addImage(barcode, 'PNG', x, y);
+  const barcodeImage = await loadImage(barcode);
+  const ratio = barcodeImage.height / barcodeImage.width;
+
+  // The barcode specification sets the maximum width and height.
+  // It also states that the barcode must be at the bottom center of the page.
+  const width = 100;
+  const height = width * ratio;
+  const centeredX = (doc.internal.pageSize.getWidth() - width) / 2;
+  const pageBottomY = 275;
+
+  doc.addImage(barcodeImage, 'PNG', centeredX, pageBottomY, width, height);
 };
 
 const boldText = (doc, string, x, y, options) => {
@@ -32,7 +42,7 @@ const boldText = (doc, string, x, y, options) => {
   doc.setFontType('normal');
 };
 
-const generateBill = (bill, date) => {
+const generateBill = async (bill, date) => {
   const doc = new JsPdf();
   const splitDescription = doc.splitTextToSize(bill.expensesDescription, 280);
   const totalOffset = 7 * (bill.expenses.length + 1);
@@ -98,7 +108,7 @@ const generateBill = (bill, date) => {
   doc.text('Eräpäivä:', 135 + 2, 265);
   doc.text(getFinnishDateRepr(dueDate), 135 + 2, 270);
 
-  writeBarcodeToDoc(doc, bill, '13', dueDate, 35, 275);
+  await writeBarcodeToDoc(doc, bill, dueDate);
 
   return doc.output('arraybuffer');
 };
@@ -129,7 +139,7 @@ const concatPdf = async (pdfDoc, pdfDataURL) => {
 const generatePdf = async (bill) => {
   const date = new Date();
   const fileName = `lasku_${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.pdf`;
-  const pdfDoc = await PDFDocument.load(generateBill(bill, date));
+  const pdfDoc = await PDFDocument.load(await generateBill(bill, date));
 
   const generatedAttachments = bill.attachments.map(async (attachment) => {
     const dataURL = await readFile(attachment);

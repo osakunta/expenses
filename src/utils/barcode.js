@@ -1,9 +1,9 @@
 import JsBarcode from 'jsbarcode';
 
 const canvasConfiguration = {
-  width: 1.5,
-  height: 40,
-  fontSize: 10,
+  width: 4,
+  height: 160,
+  fontSize: 36,
 };
 
 const getSerialNumber = (iban, price, referenceNumber, dueDate) => {
