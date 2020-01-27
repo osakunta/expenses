@@ -1,4 +1,5 @@
 import JsBarcode from 'jsbarcode';
+import { createCanvas } from 'canvas';
 
 const canvasConfiguration = {
   width: 4,
@@ -26,7 +27,7 @@ const writeOnCanvas = (canvas, content) => {
 };
 
 export default function generateBarcode({ iban, totalPrice, referenceNumber, dueDate }) {
-  const canvas = document.createElement('canvas');
+  const canvas = createCanvas();
   const context = canvas.getContext('2d');
 
   const serialNumber = getSerialNumber(
