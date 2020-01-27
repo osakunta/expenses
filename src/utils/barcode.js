@@ -39,7 +39,7 @@ export default function generateBarcode({ iban, totalPrice, referenceNumber, due
   writeOnCanvas(canvas, serialNumber);
   context.fill();
 
-  const barcodeAsDataURL = canvas.toDataURL('image/png', 1.0);
+  const barcodeAsDataURL = canvas.toDataURL('image/png');
 
   return barcodeAsDataURL;
 }
