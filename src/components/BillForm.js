@@ -146,6 +146,8 @@ const BillForm = (props) => {
 
       <Header as="h2">Liitteet</Header>
 
+      <p>Voit lisätä liitteiksi kuvia ja pdf-tiedostoja.</p>
+
       <Input
         fluid
         name="attachments"
