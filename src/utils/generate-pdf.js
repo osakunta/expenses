@@ -59,17 +59,16 @@ const generateBill = async (bill, date) => {
   doc.text(`${bill.biller.zipCode} ${bill.biller.postOffice}`, 15, 35);
 
   boldText(doc, 'LASKUTETTAVA', 15, 50);
-  doc.text('Satalinnan Säätiö', 15, 55);
+  doc.text('Satalinnan Säätiö sr', 15, 55);
   doc.text('Lapinrinne 1 A 8', 15, 60);
   doc.text('00180 Helsinki', 15, 65);
 
-  doc.text('Sarjanro 27810795', 50, 55);
-  doc.text('PL 872', 50, 60);
-  doc.text('00019 SSC', 50, 65);
+  doc.text('OpusCapita skannauspalvelu', 55, 55);
+  doc.text('PL 23675', 55, 60);
+  doc.text('00062 LASKUTUS', 55, 65);
 
   boldText(doc, 'KUVAUS', 15, 80);
   doc.text(15, 85, splitDescription);
-
 
   boldText(doc, 'ERITTELY', 15, 110);
   doc.rect(15, 110 + 2, 150, 7);
