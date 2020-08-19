@@ -1,4 +1,3 @@
-
 const countFromForm = (total, expense) => {
   return total + parseFloat(expense.price);
 };
