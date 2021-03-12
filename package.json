@@ -28,7 +28,7 @@
     "@testing-library/user-event": "^7.1.2",
     "canvas": "^2.6.1",
     "jsbarcode": "^3.11.0",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.1",
     "pdf-lib": "^1.2.1",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
