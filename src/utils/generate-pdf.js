@@ -63,9 +63,9 @@ const generateBill = async (bill, date) => {
   doc.text('Lapinrinne 1 A 8', 15, 60);
   doc.text('00180 Helsinki', 15, 65);
 
-  doc.text('OpusCapita skannauspalvelu', 55, 55);
-  doc.text('PL 23675', 55, 60);
-  doc.text('00062 LASKUTUS', 55, 65);
+  doc.text('Satalinnan Säätiö sr (Apix skannauspalvelu)', 55, 55);
+  doc.text('PL 16112', 55, 60);
+  doc.text('00021 LASKUTUS', 55, 65);
 
   boldText(doc, 'KUVAUS', 15, 80);
   doc.text(15, 85, splitDescription);
